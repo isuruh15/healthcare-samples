@@ -5,13 +5,19 @@ import ballerinax/health.hl7v2;
 
 // This file contains utility function that will be added to v2tofhir lib
 
+
+// This map holds the custom transformation functions for each resource type.
+// The key is the resource type and the value is the function that will be used to transform the resource.
 isolated map<enrichFhirResource> customTransformationFunctions = {
 };
 
+// Kept an option to skip the merge of original resource with transformed resource.
+// This is useful when the original resource is not needed and only the transformed resource is required.
 isolated boolean isSkipMergeConfig = false;
 
 public type enrichFhirResource isolated function (r4:Resource originalResource, hl7v2:Message incomingMsg) returns r4:Resource|error;
 
+// This function will be engaged after the v2ToFhir transformation.
 public isolated function postProcessBundle(r4:Bundle bundle, hl7v2:Message incomingMsg) returns r4:Bundle|error {
     r4:BundleEntry[] updatedEntries = [];
     r4:BundleEntry[] entries = <r4:BundleEntry[]>bundle.entry;
@@ -48,6 +54,8 @@ public isolated function postProcessBundle(r4:Bundle bundle, hl7v2:Message incom
     return bundle;
 }
 
+
+// Utility function to merge the original FHIR resource with the transformed FHIR resource.
 public isolated function mergeFhirResources(r4:Resource originalResource, r4:Resource transformedResource) returns r4:Resource {
     // Merge logic here
     // This is a placeholder for the actual merge logic
@@ -68,6 +76,8 @@ public isolated function mergeFhirResources(r4:Resource originalResource, r4:Res
     return mergedResource;
 }
 
+
+// Utility function to add custom transformation functions
 public isolated function addCustomTransformationFunction(string resourceType, enrichFhirResource customFunction) {
     lock {
         customTransformationFunctions[resourceType] = customFunction;

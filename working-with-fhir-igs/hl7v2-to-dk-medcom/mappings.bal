@@ -9,65 +9,11 @@ function init() {
 
     // Register custom transformation functions for the resources
     addCustomTransformationFunction("Patient", transformPatient);
-    // addCustomTransformationFunction("Encounter", transformEncounter);
-    // addCustomTransformationFunction("DiagnosticReport", transformDiagnosticReport);
-    // addCustomTransformationFunction("Observation", transformObservation);
-    // addCustomTransformationFunction("Organization", transformOrganization);
-    // addCustomTransformationFunction("Practitioner", transformPractitioner);
-}
-
-# Custom values can be populated using the incoing message. Result need to be merge with original resource.
-#
-# + originalMessage - incoming HL7v2 message
-# + return - Patient resource containing only the customly mapped values.
-public isolated function createCustomPatient(hl7:Message originalMessage) returns medcom240:MedComCorePatient|error {
-
-    hl7v23:ADT_A01 adtMsg = <hl7v23:ADT_A01>originalMessage;
-    hl7v23:PID pidSegment = adtMsg.pid;
-    hl7v23:PV1 pv1Segment = adtMsg.pv1;
-
-    string internalId = pidSegment.pid3[0].cx1;
-    string danishFHIRId = uuid:createType1AsString();
-    string familyName = pidSegment.pid5[0].xpn1;
-    string givenName = pidSegment.pid5[0].xpn2;
-
-    string referringDoctorId = pv1Segment.pv18[0].xcn1;
-
-    medcom240:MedComCorePatientIdentifierD_ecpr deprIdentifier = {
-        value: internalId
-
-    };
-
-    medcom240:MedComCorePatientIdentifierCpr cprIdentifier = {
-        value: danishFHIRId
-    };
-
-    medcom240:MedComCorePatientNameOfficial slicedName = {
-        family: familyName,
-        given: [givenName]
-    };
-
-    medcom240:MedComCorePatientGeneralPractitionerReferencedSORUnit slicedPractitioner = {
-        identifier: {
-            value: referringDoctorId,
-            system: "urn:oid:1.2.208.176.1.1",
-            use: "official"
-        }
-
-    };
-    r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-patient"];
-
-    medcom240:MedComCorePatient customPatient = {
-
-        identifier: [cprIdentifier, deprIdentifier],
-        name: [slicedName],
-        generalPractitioner: [slicedPractitioner],
-        meta: {
-            profile: profiles
-        }
-    };
-
-    return customPatient;
+    addCustomTransformationFunction("Encounter", transformEncounter);
+    addCustomTransformationFunction("DiagnosticReport", transformDiagnosticReport);
+    addCustomTransformationFunction("Observation", transformObservation);
+    addCustomTransformationFunction("Organization", transformOrganization);
+    addCustomTransformationFunction("Practitioner", transformPractitioner);
 }
 
 # Transformation function for patient resource. Includes custom mappings as well
@@ -77,35 +23,9 @@ public isolated function createCustomPatient(hl7:Message originalMessage) return
 # + return - completed Danish FHIR profiled resource
 public isolated function transformPatient(r4:Resource originalResource, hl7:Message incomingMsg) returns medcom240:MedComCorePatient|error {
 
-    international401:Patient patient = check originalResource.cloneWithType(international401:Patient);
-
-    // add IG specific constrained values for typed clone.
-    patient.identifier = [];
-    patient.name = [];
-
-    medcom240:MedComCorePatient originalPatient = check patient.cloneWithType(medcom240:MedComCorePatient);
     medcom240:MedComCorePatient customPatient = check createCustomPatient(incomingMsg);
-
-    //Merge identifiers
-    if originalPatient.identifier.length() == 0 {
-        originalPatient.identifier = customPatient.identifier;
-    } else {
-        foreach medcom240:MedComCorePatientIdentifierD_ecpr|medcom240:MedComCorePatientIdentifierCpr identifier in customPatient.identifier {
-            originalPatient.identifier.push(identifier);
-        }
-    }
-
-    //Merge Names
-    if originalPatient.name.length() == 0 {
-        originalPatient.name = customPatient.name;
-    } else {
-        foreach r4:HumanName|medcom240:MedComCorePatientNameOfficial name in customPatient.name {
-            originalPatient.name.push(name);
-        }
-    }
-
     //Set profile
-    originalPatient.meta.profile = customPatient.meta?.profile;
+    customPatient.meta.profile = customPatient.meta?.profile;
 
     return customPatient;
 }
@@ -199,4 +119,58 @@ public isolated function customTransformPractitioner(r4:Resource originalResourc
     castedResource.meta.profile = profiles;
 
     return castedResource;
+}
+
+# Custom values can be populated using the incoing message. Result need to be merge with original resource.
+#
+# + originalMessage - incoming HL7v2 message
+# + return - Patient resource containing only the customly mapped values.
+isolated function createCustomPatient(hl7:Message originalMessage) returns medcom240:MedComCorePatient|error {
+
+    hl7v23:ADT_A01 adtMsg = <hl7v23:ADT_A01>originalMessage;
+    hl7v23:PID pidSegment = adtMsg.pid;
+    hl7v23:PV1 pv1Segment = adtMsg.pv1;
+
+    string internalId = pidSegment.pid3[0].cx1;
+    string danishFHIRId = uuid:createType1AsString();
+    string familyName = pidSegment.pid5[0].xpn1;
+    string givenName = pidSegment.pid5[0].xpn2;
+
+    string referringDoctorId = pv1Segment.pv18[0].xcn1;
+
+    medcom240:MedComCorePatientIdentifierD_ecpr deprIdentifier = {
+        value: internalId
+
+    };
+
+    medcom240:MedComCorePatientIdentifierCpr cprIdentifier = {
+        value: danishFHIRId
+    };
+
+    medcom240:MedComCorePatientNameOfficial slicedName = {
+        family: familyName,
+        given: [givenName]
+    };
+
+    medcom240:MedComCorePatientGeneralPractitionerReferencedSORUnit slicedPractitioner = {
+        identifier: {
+            value: referringDoctorId,
+            system: "urn:oid:1.2.208.176.1.1",
+            use: "official"
+        }
+
+    };
+    r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-patient"];
+
+    medcom240:MedComCorePatient customPatient = {
+
+        identifier: [cprIdentifier, deprIdentifier],
+        name: [slicedName],
+        generalPractitioner: [slicedPractitioner],
+        meta: {
+            profile: profiles
+        }
+    };
+
+    return customPatient;
 }
