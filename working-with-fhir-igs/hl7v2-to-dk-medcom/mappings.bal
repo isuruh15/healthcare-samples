@@ -24,8 +24,6 @@ function init() {
 public isolated function transformPatient(r4:Resource originalResource, hl7:Message incomingMsg) returns medcom240:MedComCorePatient|error {
 
     medcom240:MedComCorePatient customPatient = check createCustomPatient(incomingMsg);
-    //Set profile
-    customPatient.meta.profile = customPatient.meta?.profile;
 
     return customPatient;
 }
