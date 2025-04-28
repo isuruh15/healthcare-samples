@@ -23,9 +23,9 @@ public function main() returns error? {
     // Parsing HL7v2 message
     hl7v2:Message incomingMsg = check hl7v2:parse(msg);
 
-    // Casting to Danish IG resources
+    // Converting to Danish IG resources
     //http://medcomfhir.dk/ig/core/2.4.0/
-    r4:Bundle castedBundle = <r4:Bundle>check postProcessBundle(transformedBundle, incomingMsg);
+    r4:Bundle castedBundle = <r4:Bundle>check processBundle(transformedBundle, incomingMsg);
     io:println("Danish FHIR bundle: ", castedBundle);
     io:println("------------------------------------------------------------------");
 

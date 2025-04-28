@@ -5,27 +5,19 @@ import ballerinax/health.fhir.r4.medcom240;
 import ballerinax/health.hl7v2 as hl7;
 import ballerinax/health.hl7v23;
 
-function init() {
+# Transformation function for patient resource. Includes custom mappings as well 
+# + originalResource - generic R4 resource   
+# + incomingMsg - original HL7v2 message 
+# + return - completed Danish FHIR profiled resource 
+isolated function transformPatient(r4:Resource originalResource, hl7:Message incomingMsg) returns medcom240:MedComCorePatient|error {
 
-    // Register custom transformation functions for the resources
-    addCustomTransformationFunction("Patient", transformPatient);
-    addCustomTransformationFunction("Encounter", transformEncounter);
-    addCustomTransformationFunction("DiagnosticReport", transformDiagnosticReport);
-    addCustomTransformationFunction("Observation", transformObservation);
-    addCustomTransformationFunction("Organization", transformOrganization);
-    addCustomTransformationFunction("Practitioner", transformPractitioner);
-}
+    // Create Patient for Danish IG
+    medcom240:MedComCorePatient customPatient = createMedcomPatient(check originalResource.cloneWithType(international401:Patient), check incomingMsg.cloneWithType(hl7v23:ADT_A01));
 
-# Transformation function for patient resource. Includes custom mappings as well
-#
-# + originalResource - generic R4 resource  
-# + incomingMsg - original HL7v2 message
-# + return - completed Danish FHIR profiled resource
-public isolated function transformPatient(r4:Resource originalResource, hl7:Message incomingMsg) returns medcom240:MedComCorePatient|error {
+    // Merge with original
+    medcom240:MedComCorePatient merged = check mergeFhirResources(originalResource, customPatient).cloneWithType(medcom240:MedComCorePatient);
 
-    medcom240:MedComCorePatient customPatient = check createCustomPatient(incomingMsg);
-
-    return customPatient;
+    return merged;
 }
 
 # Contains generic convertion and type casting implementation for Encounter resource.
@@ -40,12 +32,10 @@ public isolated function transformEncounter(r4:Resource originalResource, hl7:Me
     // add IG specific constrained values for typed clone.
     typedResource.subject = {};
 
-    medcom240:MedComCoreEncounter castedResource = check typedResource.cloneWithType(medcom240:MedComCoreEncounter);
-    r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-encounter"];
+    medcom240:MedComCoreEncounter customEncounter = createMedcomEncounter(typedResource,check incomingMsg.cloneWithType(hl7v23:ADT_A01));
 
-    castedResource.meta.profile = profiles;
-
-    return castedResource;
+    medcom240:MedComCoreEncounter merged = check mergeFhirResources(originalResource, customEncounter).cloneWithType(medcom240:MedComCoreEncounter);
+    return merged;
 }
 
 public isolated function transformDiagnosticReport(r4:Resource originalResource, hl7:Message incomingMsg) returns medcom240:MedComCoreDiagnosticReport|error {
@@ -59,36 +49,6 @@ public isolated function transformDiagnosticReport(r4:Resource originalResource,
 
     medcom240:MedComCoreDiagnosticReport castedResource = check typedResource.cloneWithType(medcom240:MedComCoreDiagnosticReport);
     r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-diagnosticreport"];
-
-    castedResource.meta.profile = profiles;
-
-    return castedResource;
-}
-
-public isolated function transformObservation(r4:Resource originalResource, hl7:Message incomingMsg) returns medcom240:MedComCoreObservation|error {
-
-    international401:Observation typedResource = check originalResource.cloneWithType(international401:Observation);
-
-    // add IG specific constrained values for typed clone.
-    typedResource.subject = {};
-
-    medcom240:MedComCoreObservation castedResource = check typedResource.cloneWithType(medcom240:MedComCoreObservation);
-    r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-diagnosticreport"];
-
-    castedResource.meta.profile = profiles;
-
-    return castedResource;
-}
-
-public isolated function transformOrganization(r4:Resource originalResource, hl7:Message incomingMsg) returns medcom240:MedComCoreOrganization|error {
-
-    international401:Organization typedResource = check originalResource.cloneWithType(international401:Organization);
-
-    // add IG specific constrained values for typed clone.
-    typedResource.identifier = [];
-
-    medcom240:MedComCoreOrganization castedResource = check typedResource.cloneWithType(medcom240:MedComCoreOrganization);
-    r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-organization"];
 
     castedResource.meta.profile = profiles;
 
