@@ -1,9 +1,12 @@
+import ballerina/io;
 import ballerina/uuid;
 import ballerinax/health.fhir.r4;
 import ballerinax/health.fhir.r4.international401;
 import ballerinax/health.fhir.r4.medcom240;
 import ballerinax/health.hl7v2 as hl7;
 import ballerinax/health.hl7v23;
+import ballerinax/health.hl7v2commons as hl7types;
+import ballerinax/health.hl7v2.utils.v2tofhirr4;
 
 # Transformation function for patient resource. Includes custom mappings as well 
 # + originalResource - generic R4 resource   
@@ -12,7 +15,7 @@ import ballerinax/health.hl7v23;
 isolated function transformPatient(r4:Resource originalResource, hl7:Message incomingMsg) returns medcom240:MedComCorePatient|error {
 
     // Create Patient for Danish IG
-    medcom240:MedComCorePatient customPatient = createMedcomPatient(check originalResource.cloneWithType(international401:Patient), check incomingMsg.cloneWithType(hl7v23:ADT_A01));
+    medcom240:MedComCorePatient customPatient = createMedcomPatient(check incomingMsg.cloneWithType(hl7v23:ADT_A01));
 
     // Merge with original
     medcom240:MedComCorePatient merged = check mergeFhirResources(originalResource, customPatient).cloneWithType(medcom240:MedComCorePatient);
@@ -32,7 +35,7 @@ public isolated function transformEncounter(r4:Resource originalResource, hl7:Me
     // add IG specific constrained values for typed clone.
     typedResource.subject = {};
 
-    medcom240:MedComCoreEncounter customEncounter = createMedcomEncounter(typedResource,check incomingMsg.cloneWithType(hl7v23:ADT_A01));
+    medcom240:MedComCoreEncounter customEncounter = createMedcomEncounter(check incomingMsg.cloneWithType(hl7v23:ADT_A01));
 
     medcom240:MedComCoreEncounter merged = check mergeFhirResources(originalResource, customEncounter).cloneWithType(medcom240:MedComCoreEncounter);
     return merged;
@@ -131,4 +134,42 @@ isolated function createCustomPatient(hl7:Message originalMessage) returns medco
     };
 
     return customPatient;
+}
+
+# Custom v2 to fhir mapping implementation. pv1 segments will refer this when transforming
+#
+# + pv1 - PV1 segment of message
+# + return - Transformed encounter resource
+public isolated function pv1ToMedcomEncounter(hl7types:Pv1 pv1) returns medcom240:MedComCoreEncounter {
+    string encounterClass = pv1.pv12.toString() == "I" ? "inpatient encounter" : "ambulatory";
+    medcom240:MedComCoreEncounter encounter = {
+        meta: {
+            profile: ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-encounter"]
+        },
+        id: pv1.pv11.toString(),
+        'class: {display: encounterClass},
+        status: "in-progress",
+        subject: {
+            reference: "Patient/221" //this value has to be taken from PID segment, kept a constant for demo purpose
+        },
+        location: []
+    };
+    return encounter;
+};
+
+isolated function extendedMappingExec() returns error? {
+    // You can also bind custom mapping function implementations by overriding 
+    // the default mapping functions. Following are the supported mapping functions. These functions are
+    // defined to map Hl7 segments to FHIR resources as per the standard mappings defined at 
+    // https://build.fhir.org/ig/HL7/v2-to-fhir/branches/master/segment_maps.html.
+    // Supported functions: Pv1ToPatient, Pv1ToEncounter, Nk1ToPatient, Pd1ToPatient, PidToPatient, Dg1ToCondition,
+    // ObxToObservation, ObrToDiagnosticReport, Al1ToAllerygyIntolerance, EvnToProvenance, MshToMessageHeader,
+    // Pv2ToEncounter, OrcToImmunization.
+    v2tofhirr4:V2SegmentToFhirMapper customMapper = {
+        pv1ToEncounter: pv1ToMedcomEncounter
+    };
+    // You can pass the custom mapper implementation as a function parameter to the v2ToFhir module.
+    json v2tofhirResult = check v2tofhirr4:v2ToFhir(msg, customMapper);
+    io:println("Transformed FHIR message using the custom mapper: ", v2tofhirResult.toString());
+    io:println("------------------------------------------------------------------");
 }

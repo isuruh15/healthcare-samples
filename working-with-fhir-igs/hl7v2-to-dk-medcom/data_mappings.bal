@@ -1,10 +1,9 @@
 import ballerina/uuid;
 import ballerinax/health.fhir.r4;
-import ballerinax/health.fhir.r4.international401;
 import ballerinax/health.fhir.r4.medcom240;
 import ballerinax/health.hl7v23;
 
-isolated function createMedcomPatient(international401:Patient originalPatient, hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCorePatient => let
+isolated function createMedcomPatient(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCorePatient => let
 var familyName = incomingMessage.pid.pid5[0].xpn1,
 var givenName = incomingMessage.pid.pid5[0].xpn2,
 medcom240:MedComCorePatientIdentifierCpr cprIdentifier = {
@@ -36,18 +35,39 @@ medcom240:MedComCorePatientIdentifierCpr cprIdentifier = {
         name: [
             slicedName
         ],
-        generalPractitioner: [slicedPractitioner],
+        generalPractitioner: [
+            slicedPractitioner
+        ],
         meta: {
             profile: profiles
-        }
+        },
+        id: incomingMessage.pid.pid1
     };
 
-isolated function createMedcomEncounter(international401:Encounter originalEncounter, hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCoreEncounter => let
+isolated function createMedcomEncounter(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCoreEncounter => let
 r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-patient"]
     in {
 
-        'class: originalEncounter.'class,
+        'class: {code: "IMP"},
         subject: {},
-        status: originalEncounter.status,
+        status: "in-progress",
+        meta: {profile: profiles}
+    };
+
+isolated function createMedcomDiagnosticReport(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCoreDiagnosticReport => let
+r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-diagnosticreport"]
+    in {
+
+        issued: "2015-02-07T13:28:17.239+02:00",
+        subject: {},
+        status: "registered",
+        meta: {profile: profiles}
+        ,
+        code: {}
+    };
+
+isolated function createMedcomPractitioner(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCorePractitioner => let
+r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-practitioner"]
+    in {
         meta: {profile: profiles}
     };

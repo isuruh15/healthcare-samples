@@ -13,35 +13,26 @@ final string msg =
 "004777^ATTEND^AARON^A|||SUR||||ADM|A0|";
 
 public function main() returns error? {
+
+    // Parsing HL7v2 message
+    hl7v2:Message incomingMsg = check hl7v2:parse(msg);
+
     // Transform HL7v2 message to FHIR R4.
     // You can pass a HL7v2 message and get a FHIR R4 Bundle based on
     // the mappings defined at
     // https://build.fhir.org/ig/HL7/v2-to-fhir/branches/master/datatype_maps.html.
     json v2tofhirResult = check v2tofhirr4:v2ToFhir(msg);
-    r4:Bundle transformedBundle = check v2tofhirResult.cloneWithType(r4:Bundle);
 
-    // Parsing HL7v2 message
-    hl7v2:Message incomingMsg = check hl7v2:parse(msg);
+    // Cast to FHIR Bundle
+    r4:Bundle transformedBundle = check v2tofhirResult.cloneWithType(r4:Bundle);
+    io:println("Standard FHIR bundle: ", transformedBundle);
+    io:println("------------------------------------------------------------------");
 
     // Converting to Danish IG resources
     //http://medcomfhir.dk/ig/core/2.4.0/
-    r4:Bundle castedBundle = <r4:Bundle>check processBundle(transformedBundle, incomingMsg);
-    io:println("Danish FHIR bundle: ", castedBundle);
-    io:println("------------------------------------------------------------------");
+    r4:Bundle castedBundle = check processBundle(transformedBundle, incomingMsg);
 
-    // You can also bind custom mapping function implementations by overriding 
-    // the default mapping functions. Following are the supported mapping functions. These functions are
-    // defined to map Hl7 segments to FHIR resources as per the standard mappings defined at 
-    // https://build.fhir.org/ig/HL7/v2-to-fhir/branches/master/segment_maps.html.
-    // Supported functions: Pv1ToPatient, Pv1ToEncounter, Nk1ToPatient, Pd1ToPatient, PidToPatient, Dg1ToCondition,
-    // ObxToObservation, ObrToDiagnosticReport, Al1ToAllerygyIntolerance, EvnToProvenance, MshToMessageHeader,
-    // Pv2ToEncounter, OrcToImmunization.
-    v2tofhirr4:V2SegmentToFhirMapper customMapper = {
-        pv1ToEncounter: pv1ToMedcomEncounter
-    };
-    // You can pass the custom mapper implementation as a function parameter to the v2ToFhir module.
-    v2tofhirResult = check v2tofhirr4:v2ToFhir(msg, customMapper);
-    io:println("Transformed FHIR message using the custom mapper: ", v2tofhirResult.toString());
+    io:println("Danish FHIR bundle: ", castedBundle);
     io:println("------------------------------------------------------------------");
 
 }
