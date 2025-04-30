@@ -126,7 +126,7 @@ public isolated function mergeFhirResources(r4:Resource? originalResource, r4:Re
     // This is a placeholder for the actual merge logic
     json transformed = transformedResource.toJson();
     json original = originalResource.toJson();
-    
+
     json|error merged = deepMergeJson(transformed, original);
 
     if merged is error {
@@ -141,5 +141,4 @@ public isolated function mergeFhirResources(r4:Resource? originalResource, r4:Re
     }
     return mergedResource;
 }
-
 

@@ -95,6 +95,10 @@ dependencies = [
 	{org = "ballerina", name = "time"},
 	{org = "ballerina", name = "url"}
 ]
+modules = [
+	{org = "ballerina", packageName = "http", moduleName = "http"},
+	{org = "ballerina", packageName = "http", moduleName = "http.httpscerr"}
+]
 
 [[package]]
 org = "ballerina"
@@ -365,7 +369,7 @@ modules = [
 [[package]]
 org = "ballerinax"
 name = "health.fhir.r4.medcom240"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
 	{org = "ballerina", name = "constraint"},
 	{org = "ballerina", name = "log"},
@@ -531,6 +535,7 @@ org = "healthcare_samples"
 name = "hl7v2_to_medcom_fhir"
 version = "1.0.0"
 dependencies = [
+	{org = "ballerina", name = "http"},
 	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "log"},
 	{org = "ballerina", name = "uuid"},
