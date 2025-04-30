@@ -30,12 +30,9 @@ public isolated function processBundle(r4:Bundle bundle, hl7:Message incomingMsg
         } else {
             result = null;
         }
-
-        if result is r4:Resource {
-            json merged = check deepMergeJson(unionResult.toJson(), result.toJson());
-            r4:Resource mergedResource = check merged.cloneWithType(r4:Resource);
-            updatedEntries.push({'resource: mergedResource});
-        }
+        json merged = check deepMergeJson(unionResult.toJson(), result.toJson());
+        r4:Resource mergedResource = check merged.cloneWithType(r4:Resource);
+        updatedEntries.push({'resource: mergedResource});
     }
     bundle.entry = updatedEntries;
 
@@ -46,6 +43,7 @@ public isolated function processBundle(r4:Bundle bundle, hl7:Message incomingMsg
 // Utility function to merge JSON objects with precedence for first object
 
 public isolated function deepMergeJson(json firstJson, json secondJson) returns json|error {
+
     // Handle non-object JSON types
     if (!(firstJson is map<json>) || !(secondJson is map<json>)) {
         // If first is not an object or both are not objects, return first (precedence)

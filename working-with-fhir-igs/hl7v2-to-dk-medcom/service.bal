@@ -11,7 +11,7 @@ type Hl7Message readonly & record {|
 
 configurable int servicePort = 9090;
 
-function init(){
+function init() {
     log:printInfo("HL7v2 to Danish Transformation Service Started..");
 }
 

@@ -33,12 +33,30 @@ The transformation runs as an HTTP service. You can invoke the relevant endpoint
    ```bash
    bal build
    ```
+
+   ```
+   Compiling source
+        healthcare_samples/hl7v2_to_medcom_fhir:1.0.0
+
+   Generating executable
+         target/bin/hl7v2_to_medcom_fhir.jar
+   ```
 3. Start the server
    ```bash
    bal run
    ```
+   ```
+   Compiling source
+        healthcare_samples/hl7v2_to_medcom_fhir:1.0.0
+
+   Running executable
+
+   time=2025-04-30T14:42:44.925+05:30 level=INFO module=healthcare_samples/hl7v2_to_medcom_fhir message="HL7v2 to Danish Transformation Service Started.."
+   ```
 
 ### V2toFHIR Transformation with Danish profiles
+
+Once the service is started, you can tryout the transformation using the following cURL.
 ```bash
 curl --location 'http://localhost:9090/hl7/parse/international' \
 --header 'Content-Type: text/plain' \
@@ -62,6 +80,41 @@ Result will look as follows
     "entry": [
         {
             "resource": {
+                "resourceType": "MessageHeader",
+                "eventUri": "",
+                "destination": [
+                    {
+                        "endpoint": "",
+                        "name": "GHH LAB, INC."
+                    }
+                ],
+                "source": {
+                    "endpoint": "",
+                    "name": "ADT1"
+                },
+                "eventCoding": {
+                    "system": "A01",
+                    "code": "ADT"
+                }
+            }
+        },
+        {
+            "resource": {
+                "resourceType": "Provenance",
+                "agent": [],
+                "activity": {
+                    "coding": [
+                        {
+                            "display": "EVN"
+                        }
+                    ]
+                },
+                "recorded": "200708181123",
+                "target": []
+            }
+        },
+        {
+            "resource": {
                 "resourceType": "Patient",
                 "id": "1",
                 "meta": {
@@ -71,13 +124,30 @@ Result will look as follows
                 },
                 "identifier": [
                     {
+                        "value": "444333333"
+                    },
+                    {
                         "value": "123456789"
                     },
                     {
                         "system": "urn:oid:1.2.208.176.1.2",
-                        "value": "01f02594-6ba7-1500-96f1-59ce4ea7a561"
+                        "value": "01f025a3-4a01-1956-898a-155b7ae122f9"
                     }
                 ],
+                "address": [
+                    {
+                        "district": "GL"
+                    },
+                    {
+                        "line": [
+                            "2222 HOME STREET"
+                        ],
+                        "city": "GREENSBORO",
+                        "state": "NC",
+                        "postalCode": "27401-1020"
+                    }
+                ],
+                "gender": "male",
                 "generalPractitioner": [
                     {
                         "identifier": {
@@ -90,12 +160,35 @@ Result will look as follows
                 "name": [
                     {
                         "given": [
+                            "ADAM",
+                            "A",
                             "ADAM"
                         ],
                         "use": "official",
-                        "family": "BATMAN"
+                        "family": "BATMAN",
+                        "suffix": [
+                            "III"
+                        ]
                     }
-                ]
+                ],
+                "telecom": [
+                    {
+                        "system": "phone",
+                        "use": "home"
+                    },
+                    {
+                        "system": "phone",
+                        "use": "home"
+                    }
+                ],
+                "birthDate": "19610615",
+                "maritalStatus": {
+                    "coding": [
+                        {
+                            "code": "S"
+                        }
+                    ]
+                }
             }
         },
         {
@@ -113,7 +206,7 @@ Result will look as follows
                     },
                     {
                         "system": "urn:oid:1.2.208.176.1.2",
-                        "value": "01f02594-6ba7-1500-b489-cb5b7edc3ebd"
+                        "value": "01f025a3-4a01-1956-bd9c-b3285259bf53"
                     }
                 ],
                 "generalPractitioner": [
@@ -123,6 +216,37 @@ Result will look as follows
                             "system": "urn:oid:1.2.208.176.1.1",
                             "value": ""
                         }
+                    }
+                ],
+                "contact": [
+                    {
+                        "name": {
+                            "family": "NUCLEAR",
+                            "given": [
+                                "NELDA",
+                                "W"
+                            ]
+                        },
+                        "telecom": [
+                            {
+                                "system": "phone",
+                                "use": "home"
+                            },
+                            {
+                                "system": "phone",
+                                "use": "home"
+                            }
+                        ],
+                        "relationship": [
+                            {
+                                "coding": [
+                                    {
+                                        "code": "NK",
+                                        "display": "NEXT OF KIN$"
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ],
                 "name": [
@@ -144,10 +268,41 @@ Result will look as follows
                         "http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-patient"
                     ]
                 },
-                "subject": {},
-                "class": {
-                    "code": "IMP"
+                "serviceType": {
+                    "text": "SUR"
                 },
+                "hospitalization": {
+                    "admitSource": {
+                        "text": "ADM"
+                    }
+                },
+                "subject": {},
+                "location": [
+                    {
+                        "location": {
+                            "display": "2000"
+                        }
+                    },
+                    {
+                        "location": {}
+                    },
+                ],
+                "class": {
+                    "code": "IMP",
+                    "display": "I"
+                },
+                "participant": [
+                    {
+                        "individual": {
+                            "display": "004777"
+                        }
+                    },
+                    {
+                        "individual": {
+                            "display": "004777"
+                        }
+                    }
+                ],
                 "status": "in-progress"
             }
         }
