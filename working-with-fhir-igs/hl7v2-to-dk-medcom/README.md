@@ -6,6 +6,9 @@ This project demonstrates how to use Ballerina's HL7v2 to FHIR conversion utilit
 
 Healthcare interoperability in Denmark requires conformance to the MedCom FHIR profiles. This utility simplifies the process of converting legacy HL7v2 messages into MedCom-compliant FHIR resources, enabling seamless integration between legacy systems and modern FHIR-based healthcare platforms.
 
+The process flow for this sample is illustrated in the following diagram.
+![alt text](image-1.png)
+
 ## Features
 
 - Convert HL7v2 ADT messages to MedCom FHIR resources
@@ -58,7 +61,7 @@ The transformation runs as an HTTP service. You can invoke the relevant endpoint
 
 Once the service is started, you can tryout the transformation using the following cURL.
 ```bash
-curl --location 'http://localhost:9090/hl7/parse/international' \
+curl --location 'http://localhost:9090/hl7/transform' \
 --header 'Content-Type: text/plain' \
 --data 'MSH|^~\\&|ADT1|GOOD HEALTH HOSPITAL|GHH LAB, INC.|GOOD HEALTH HOSPITAL|198808181126|SECURITY|ADT^A01^ADT_A01|MSG00001|P|2.3||
 EVN|A01|200708181123||

@@ -362,9 +362,6 @@ dependencies = [
 	{org = "ballerina", name = "log"},
 	{org = "ballerinax", name = "health.fhir.r4"}
 ]
-modules = [
-	{org = "ballerinax", packageName = "health.fhir.r4.international401", moduleName = "health.fhir.r4.international401"}
-]
 
 [[package]]
 org = "ballerinax"
@@ -526,9 +523,6 @@ dependencies = [
 	{org = "ballerinax", name = "health.hl7v27"},
 	{org = "ballerinax", name = "health.hl7v28"}
 ]
-modules = [
-	{org = "ballerinax", packageName = "health.hl7v2commons", moduleName = "health.hl7v2commons"}
-]
 
 [[package]]
 org = "healthcare_samples"
@@ -540,13 +534,11 @@ dependencies = [
 	{org = "ballerina", name = "log"},
 	{org = "ballerina", name = "uuid"},
 	{org = "ballerinax", name = "health.fhir.r4"},
-	{org = "ballerinax", name = "health.fhir.r4.international401"},
 	{org = "ballerinax", name = "health.fhir.r4.medcom240"},
 	{org = "ballerinax", name = "health.fhir.r4.parser"},
 	{org = "ballerinax", name = "health.hl7v2"},
 	{org = "ballerinax", name = "health.hl7v2.utils.v2tofhirr4"},
-	{org = "ballerinax", name = "health.hl7v23"},
-	{org = "ballerinax", name = "health.hl7v2commons"}
+	{org = "ballerinax", name = "health.hl7v23"}
 ]
 modules = [
 	{org = "healthcare_samples", packageName = "hl7v2_to_medcom_fhir", moduleName = "hl7v2_to_medcom_fhir"}

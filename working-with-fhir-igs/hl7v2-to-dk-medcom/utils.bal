@@ -1,6 +1,20 @@
-import ballerina/log;
+// Copyright (c) 2025, WSO2 LLC. (http://www.wso2.com).
+
+// WSO2 LLC. licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License.
+// You may obtain a copy of the License at
+
+// http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
 import ballerinax/health.fhir.r4;
-import ballerinax/health.fhir.r4.parser;
 import ballerinax/health.hl7v2 as hl7;
 import ballerinax/health.hl7v23;
 
@@ -20,13 +34,13 @@ public isolated function processBundle(r4:Bundle bundle, hl7:Message incomingMsg
 
         if resourceType.equalsIgnoreCaseAscii("Patient") {
             // result = check transformPatient(unionResult,incomingMsg);
-            result = createMedcomPatient(check incomingMsg.cloneWithType(hl7v23:ADT_A01));
+            result = mapMedcomPatient(check incomingMsg.cloneWithType(hl7v23:ADT_A01));
         } else if resourceType.equalsIgnoreCaseAscii("Encounter") {
-            result = createMedcomEncounter(check incomingMsg.cloneWithType(hl7v23:ADT_A01));
+            result = mapMedcomEncounter(check incomingMsg.cloneWithType(hl7v23:ADT_A01));
         } else if resourceType.equalsIgnoreCaseAscii("DiagnosticReport") {
-            result = createMedcomDiagnosticReport(check incomingMsg.cloneWithType(hl7v23:ADT_A01));
+            result = mapMedcomDiagnosticReport(check incomingMsg.cloneWithType(hl7v23:ADT_A01));
         } else if resourceType.equalsIgnoreCaseAscii("Practitioner") {
-            result = createMedcomPractitioner(check incomingMsg.cloneWithType(hl7v23:ADT_A01));
+            result = mapMedcomPractitioner(check incomingMsg.cloneWithType(hl7v23:ADT_A01));
         } else {
             result = null;
         }
@@ -109,34 +123,5 @@ public isolated function deepMergeJson(json firstJson, json secondJson) returns 
     }
 
     return result;
-}
-
-// Utility function to merge the original FHIR resource with the transformed FHIR resource.
-public isolated function mergeFhirResources(r4:Resource? originalResource, r4:Resource? transformedResource) returns r4:Resource {
-
-    if originalResource is null {
-        return <r4:Resource>transformedResource;
-    }
-    if transformedResource is null {
-        return <r4:Resource>originalResource;
-    }
-    // Merge logic here
-    // This is a placeholder for the actual merge logic
-    json transformed = transformedResource.toJson();
-    json original = originalResource.toJson();
-
-    json|error merged = deepMergeJson(transformed, original);
-
-    if merged is error {
-        log:printError("Error merging resources. Ignoring original FHIR resource", merged);
-        return transformedResource;
-    }
-    // Convert merged json back to FHIR resource
-    r4:Resource|error mergedResource = parser:parse(merged.toString()).ensureType(r4:Resource);
-    if mergedResource is error {
-        log:printError("Error parsing merged resource. Ignoring original FHIR resource", mergedResource);
-        return transformedResource;
-    }
-    return mergedResource;
 }
 

@@ -1,9 +1,25 @@
+// Copyright (c) 2025, WSO2 LLC. (http://www.wso2.com).
+
+// WSO2 LLC. licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License.
+// You may obtain a copy of the License at
+
+// http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
 import ballerina/uuid;
 import ballerinax/health.fhir.r4;
 import ballerinax/health.fhir.r4.medcom240;
 import ballerinax/health.hl7v23;
 
-isolated function createMedcomPatient(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCorePatient => let
+isolated function mapMedcomPatient(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCorePatient => let
 var familyName = incomingMessage.pid.pid5[0].xpn1,
 var givenName = incomingMessage.pid.pid5[0].xpn2,
 medcom240:MedComCorePatientIdentifierCpr cprIdentifier = {
@@ -44,7 +60,7 @@ medcom240:MedComCorePatientIdentifierCpr cprIdentifier = {
         id: incomingMessage.pid.pid1
     };
 
-isolated function createMedcomEncounter(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCoreEncounter => let
+isolated function mapMedcomEncounter(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCoreEncounter => let
 r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-patient"]
     in {
 
@@ -54,7 +70,7 @@ r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/med
         meta: {profile: profiles}
     };
 
-isolated function createMedcomDiagnosticReport(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCoreDiagnosticReport => let
+isolated function mapMedcomDiagnosticReport(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCoreDiagnosticReport => let
 r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-diagnosticreport"]
     in {
 
@@ -66,7 +82,7 @@ r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/med
         code: {}
     };
 
-isolated function createMedcomPractitioner(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCorePractitioner => let
+isolated function mapMedcomPractitioner(hl7v23:ADT_A01 incomingMessage) returns medcom240:MedComCorePractitioner => let
 r4:canonical[] profiles = ["http://medcomfhir.dk/ig/core/StructureDefinition/medcom-core-practitioner"]
     in {
         meta: {profile: profiles}
