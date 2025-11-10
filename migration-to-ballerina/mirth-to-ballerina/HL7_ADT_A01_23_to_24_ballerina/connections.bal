@@ -80,7 +80,13 @@ public isolated function isFileOlderThan(string filePath, int ageMs) returns boo
     time:Utc modifiedTime = metadata.modifiedTime;
     time:Utc currentTime = time:utcNow();
 
-    decimal ageInSeconds = time:utcDiffSeconds(currentTime, modifiedTime);
+    time:Seconds? ageInSeconds = time:utcDiffSeconds(currentTime, modifiedTime);
+
+    if ageInSeconds is () {
+        // If we can't calculate the difference, assume the file is ready
+        return true;
+    }
+
     decimal ageInMsDecimal = ageInSeconds * 1000;
 
     return ageInMsDecimal >= <decimal>ageMs;

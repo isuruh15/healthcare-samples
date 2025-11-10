@@ -38,3 +38,8 @@ version = "2.8.0"
 org = "ballerina"
 name = "task"
 version = "2.8.0"
+
+[[dependency]]
+org = "xlibb"
+name = "pipeline"
+version = "1.0.0"
