@@ -1,0 +1,168 @@
+<connector version="4.5.1">
+  <metaDataId>0</metaDataId>
+  <name>sourceConnector</name>
+  <properties class="com.mirth.connect.connectors.file.FileReceiverProperties" version="4.5.1">
+    <pluginProperties/>
+    <pollConnectorProperties version="4.5.1">
+      <pollingType>INTERVAL</pollingType>
+      <pollOnStart>false</pollOnStart>
+      <pollingFrequency>5000</pollingFrequency>
+      <pollingHour>0</pollingHour>
+      <pollingMinute>0</pollingMinute>
+      <cronJobs/>
+      <pollConnectorPropertiesAdvanced>
+        <weekly>true</weekly>
+        <inactiveDays>
+          <boolean>false</boolean>
+          <boolean>false</boolean>
+          <boolean>false</boolean>
+          <boolean>false</boolean>
+          <boolean>false</boolean>
+          <boolean>false</boolean>
+          <boolean>false</boolean>
+          <boolean>false</boolean>
+        </inactiveDays>
+        <dayOfMonth>1</dayOfMonth>
+        <allDay>true</allDay>
+        <startingHour>8</startingHour>
+        <startingMinute>0</startingMinute>
+        <endingHour>17</endingHour>
+        <endingMinute>0</endingMinute>
+      </pollConnectorPropertiesAdvanced>
+    </pollConnectorProperties>
+    <sourceConnectorProperties version="4.5.1">
+      <responseVariable>None</responseVariable>
+      <respondAfterProcessing>true</respondAfterProcessing>
+      <processBatch>false</processBatch>
+      <firstResponse>false</firstResponse>
+      <processingThreads>1</processingThreads>
+      <resourceIds class="linked-hash-map">
+        <entry>
+          <string>Default Resource</string>
+          <string>[Default Resource]</string>
+        </entry>
+      </resourceIds>
+      <queueBufferSize>1000</queueBufferSize>
+    </sourceConnectorProperties>
+    <scheme>FILE</scheme>
+    <host>/Users/isurus/wso2/healthcare/other/rnd/mirth/hl7_v23tov24</host>
+    <fileFilter>*.txt</fileFilter>
+    <regex>false</regex>
+    <directoryRecursion>false</directoryRecursion>
+    <ignoreDot>true</ignoreDot>
+    <anonymous>true</anonymous>
+    <username>anonymous</username>
+    <password>anonymous</password>
+    <timeout>10000</timeout>
+    <secure>true</secure>
+    <passive>true</passive>
+    <validateConnection>true</validateConnection>
+    <afterProcessingAction>MOVE</afterProcessingAction>
+    <moveToDirectory>/Users/isurus/wso2/healthcare/other/rnd/mirth/hl7_v23tov24/gen</moveToDirectory>
+    <moveToFileName>${originalFilename}-ProcessedOn-${DATE}${SYSTIME}</moveToFileName>
+    <errorReadingAction>NONE</errorReadingAction>
+    <errorResponseAction>AFTER_PROCESSING</errorResponseAction>
+    <errorMoveToDirectory></errorMoveToDirectory>
+    <errorMoveToFileName></errorMoveToFileName>
+    <checkFileAge>true</checkFileAge>
+    <fileAge>1000</fileAge>
+    <fileSizeMinimum>0</fileSizeMinimum>
+    <fileSizeMaximum></fileSizeMaximum>
+    <ignoreFileSizeMaximum>true</ignoreFileSizeMaximum>
+    <sortBy>date</sortBy>
+    <binary>false</binary>
+    <charsetEncoding>DEFAULT_ENCODING</charsetEncoding>
+  </properties>
+  <transformer version="4.5.1">
+    <elements/>
+    <inboundTemplate encoding="base64"></inboundTemplate>
+    <outboundTemplate encoding="base64"></outboundTemplate>
+    <inboundDataType>HL7V2</inboundDataType>
+    <outboundDataType>HL7V2</outboundDataType>
+    <inboundProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DataTypeProperties" version="4.5.1">
+      <serializationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2SerializationProperties" version="4.5.1">
+        <handleRepetitions>true</handleRepetitions>
+        <handleSubcomponents>true</handleSubcomponents>
+        <useStrictParser>false</useStrictParser>
+        <useStrictValidation>false</useStrictValidation>
+        <stripNamespaces>true</stripNamespaces>
+        <segmentDelimiter>\r</segmentDelimiter>
+        <convertLineBreaks>true</convertLineBreaks>
+      </serializationProperties>
+      <deserializationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DeserializationProperties" version="4.5.1">
+        <useStrictParser>false</useStrictParser>
+        <useStrictValidation>false</useStrictValidation>
+        <segmentDelimiter>\r</segmentDelimiter>
+      </deserializationProperties>
+      <batchProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2BatchProperties" version="4.5.1">
+        <splitType>MSH_Segment</splitType>
+        <batchScript></batchScript>
+      </batchProperties>
+      <responseGenerationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2ResponseGenerationProperties" version="4.5.1">
+        <segmentDelimiter>\r</segmentDelimiter>
+        <successfulACKCode>AA</successfulACKCode>
+        <successfulACKMessage></successfulACKMessage>
+        <errorACKCode>AE</errorACKCode>
+        <errorACKMessage>An Error Occurred Processing Message.</errorACKMessage>
+        <rejectedACKCode>AR</rejectedACKCode>
+        <rejectedACKMessage>Message Rejected.</rejectedACKMessage>
+        <msh15ACKAccept>false</msh15ACKAccept>
+        <dateFormat>yyyyMMddHHmmss.SSS</dateFormat>
+      </responseGenerationProperties>
+      <responseValidationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2ResponseValidationProperties" version="4.5.1">
+        <successfulACKCode>AA,CA</successfulACKCode>
+        <errorACKCode>AE,CE</errorACKCode>
+        <rejectedACKCode>AR,CR</rejectedACKCode>
+        <validateMessageControlId>true</validateMessageControlId>
+        <originalMessageControlId>Destination_Encoded</originalMessageControlId>
+        <originalIdMapVariable></originalIdMapVariable>
+      </responseValidationProperties>
+    </inboundProperties>
+    <outboundProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DataTypeProperties" version="4.5.1">
+      <serializationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2SerializationProperties" version="4.5.1">
+        <handleRepetitions>true</handleRepetitions>
+        <handleSubcomponents>true</handleSubcomponents>
+        <useStrictParser>false</useStrictParser>
+        <useStrictValidation>false</useStrictValidation>
+        <stripNamespaces>true</stripNamespaces>
+        <segmentDelimiter>\r</segmentDelimiter>
+        <convertLineBreaks>true</convertLineBreaks>
+      </serializationProperties>
+      <deserializationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DeserializationProperties" version="4.5.1">
+        <useStrictParser>false</useStrictParser>
+        <useStrictValidation>false</useStrictValidation>
+        <segmentDelimiter>\r</segmentDelimiter>
+      </deserializationProperties>
+      <batchProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2BatchProperties" version="4.5.1">
+        <splitType>MSH_Segment</splitType>
+        <batchScript></batchScript>
+      </batchProperties>
+      <responseGenerationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2ResponseGenerationProperties" version="4.5.1">
+        <segmentDelimiter>\r</segmentDelimiter>
+        <successfulACKCode>AA</successfulACKCode>
+        <successfulACKMessage></successfulACKMessage>
+        <errorACKCode>AE</errorACKCode>
+        <errorACKMessage>An Error Occurred Processing Message.</errorACKMessage>
+        <rejectedACKCode>AR</rejectedACKCode>
+        <rejectedACKMessage>Message Rejected.</rejectedACKMessage>
+        <msh15ACKAccept>false</msh15ACKAccept>
+        <dateFormat>yyyyMMddHHmmss.SSS</dateFormat>
+      </responseGenerationProperties>
+      <responseValidationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2ResponseValidationProperties" version="4.5.1">
+        <successfulACKCode>AA,CA</successfulACKCode>
+        <errorACKCode>AE,CE</errorACKCode>
+        <rejectedACKCode>AR,CR</rejectedACKCode>
+        <validateMessageControlId>true</validateMessageControlId>
+        <originalMessageControlId>Destination_Encoded</originalMessageControlId>
+        <originalIdMapVariable></originalIdMapVariable>
+      </responseValidationProperties>
+    </outboundProperties>
+  </transformer>
+  <filter version="4.5.1">
+    <elements/>
+  </filter>
+  <transportName>File Reader</transportName>
+  <mode>SOURCE</mode>
+  <enabled>true</enabled>
+  <waitForPrevious>true</waitForPrevious>
+</connector>

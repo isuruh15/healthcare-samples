@@ -1,0 +1,86 @@
+[package]
+org = "isurus"
+name = "hl7v2_to_fhir_ballerina"
+version = "0.1.0"
+title = "HL7 to FHIR Conversion Pipeline"
+description = "Ballerina implementation of Mirth Connect HL7 conversion channel using xlibb/pipeline"
+authors = ["WSO2"]
+keywords = ["hl7", "healthcare", "integration", "pipeline", "mirth", "mllp"]
+license = ["Apache-2.0"]
+
+[build-options]
+sticky = true
+observabilityIncluded = true
+
+[[dependency]]
+org = "xlibb"
+name = "pipeline"
+version = "1.0.0"
+
+[[dependency]]
+org = "ballerina"
+name = "tcp"
+version = "1.13.2"
+
+[[dependency]]
+org = "ballerina"
+name = "log"
+version = "2.14.0"
+
+[[dependency]]
+org = "ballerina"
+name = "constraint"
+version = "1.6.0"
+
+[[dependency]]
+org = "ballerina"
+name = "time"
+version = "2.7.0"
+
+[[dependency]]
+org = "ballerina"
+name = "uuid"
+version = "1.10.0"
+
+[[dependency]]
+org = "ballerina"
+name = "lang.regexp"
+version = "0.8.0"
+
+[[dependency]]
+org = "ballerina"
+name = "messaging"
+version = "1.0.0"
+
+# Optional dependencies for future enhancements
+# Uncomment when implementing HL7v2 parsing with Ballerina libraries
+# [[dependency]]
+# org = "ballerinax"
+# name = "health.hl7v2"
+# version = "3.0.5"
+
+# Uncomment when implementing FHIR integration
+# [[dependency]]
+# org = "ballerinax"
+# name = "health.fhir.r4"
+# version = "6.2.2"
+
+# Uncomment when implementing database writes
+# [[dependency]]
+# org = "ballerina"
+# name = "sql"
+# version = "1.15.0"
+#
+# [[dependency]]
+# org = "ballerinax"
+# name = "mysql.driver"
+# version = "1.8.0"
+
+# Uncomment when implementing RabbitMQ message store for failures
+# [[dependency]]
+# org = "ballerinax"
+# name = "rabbitmq"
+# version = "3.9.0"
+
+[platform.java21]
+graalvmCompatible = true
