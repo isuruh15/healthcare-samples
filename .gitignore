@@ -24,6 +24,7 @@ hs_err_pid*
 
 **/target/
 **/gen/
+**/Config.toml
 .DS_Store
 
 
